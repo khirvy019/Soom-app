@@ -1,5 +1,6 @@
 <template>
   <q-page class="q-pa-md">
+    <div class="text-h5 q-mb-md">WebRTC 1</div>
     <q-input
       dense
       outlined
@@ -103,7 +104,7 @@
         <div class="row items-center member-toolbar">
           <div>
             <div>{{ member?.identity?.name }}</div>
-            <div v-if="member?.id" class="text-caption">#{{ member?.id }}</div>
+            <div v-if="member?.id" class="text-caption">{{ member?.handle }}</div>
           </div>
           <q-space/>
           <MediaStreamRecorder
@@ -161,7 +162,7 @@ export default defineComponent({
     const manager = ref([].map(() => new WebRtcCallManager())[0])
     async function initManager() {
       manager.value?.cleanUp?.()
-      if (manager.value && keepManager.value) {
+      if (manager.value) {
         manager.value.callId = orderCallSession.value.id
         return
       }

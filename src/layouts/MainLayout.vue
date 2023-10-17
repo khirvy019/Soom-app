@@ -68,9 +68,8 @@ const linksList = [
     to: { name: 'webrtc1' },
   },
   {
-    disable: true,
     title: 'Implementation #2',
-    caption: 'A rewritten version',
+    caption: 'Another version with different handshake protocol',
     icon: 'filter_2',
     to: { name: 'webrtc2' },
   },

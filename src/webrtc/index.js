@@ -148,6 +148,7 @@ export class RoomMember {
 export class WebRtcCallManager {
   /**
    * @param {Object} opts
+   * @param {'default' | 'v2'} opts.handshakeProtocol
    * @param {String} opts.callId
    * @param {Number} opts.peerId
    * @param {Object} opts.identity
@@ -159,6 +160,7 @@ export class WebRtcCallManager {
    * @param {String | function} opts.signaller.url
    */
   constructor(opts) {
+    this.handshakeProtocol = opts?.handshakeProtocol
     this.localPeerId = opts?.peerId || Date.now()
     this.localIdentity = opts?.identity
     this.setCallId(opts?.callId)
@@ -176,6 +178,13 @@ export class WebRtcCallManager {
       signallerUrl: opts?.signaller?.url || defaultSignallerUrl,
       webRtcManager: this,
     })
+
+    if (this.useV2Protocol) console.log('Using v2 protocol')
+    else console.log('Using default protocol')
+  }
+
+  get useV2Protocol() {
+    return this.handshakeProtocol === 'v2'
   }
 
   get localPeerId() {
@@ -380,17 +389,37 @@ export class WebRtcCallManager {
     await member.createOfferLocalDescription();
     console.log(member.handle, 'Local description set successfully')
 
+    member.peer.addEventListener('icecandidateerror', (...args) => {
+      console.error(member.handle, 'icecandidateerror', ...args)
+    })
+
     this.signaller.sendSignal('new-offer', {
+      sdp: this.useV2Protocol ? member.peer.localDescription : undefined,
       receiver_channel_name: channelName,
       local_identity: this.localIdentity,
     });
-    await member.waitGatheringComplete();
-    console.log(member.handle, 'Gathering complete');
 
-    this.signaller.sendSignal('new-offer', {
-      sdp: member.peer.localDescription,
-      receiver_channel_name: channelName,
-    });
+    if (this.useV2Protocol) {
+      member.peer.addEventListener('icecandidate', evt => {
+        console.log(member.handle, 'icecandidate', evt)
+        if (!evt.candidate) return
+        this.signaller.sendSignal('ice-candidate', {
+          receiver_channel_name: channelName,
+          candidate: evt.candidate,
+        })
+      })
+    }
+
+    const gatheringPromise = member.waitGatheringComplete()
+      .then(() => console.log(member.handle, 'Gathering complete'));
+
+    if (!this.useV2Protocol) {
+      await gatheringPromise
+      this.signaller.sendSignal('new-offer', {
+        sdp: member.peer.localDescription,
+        receiver_channel_name: channelName,
+      });
+    }
 
     setTimeout(() => {
       console.log(member.handle, 'Checking remote description')
@@ -453,6 +482,10 @@ export class WebRtcCallManager {
         })
     })
 
+    member.peer.addEventListener('icecandidateerror', (...args) => {
+      console.error(member.handle, 'icecandidateerror', ...args)
+    })
+
     if (offer) {
       await member.peer.setRemoteDescription(offer)
       console.log(member.handle, 'Remote description set successfully')
@@ -466,10 +499,6 @@ export class WebRtcCallManager {
         local_identity: this.localIdentity,
       })
     }
-    member.peer.addEventListener('icegatheringstatechange', (...args) => {
-      console.log(...args)
-      console.log(member.handle, 'icegatheringstatechange', member.state)
-    })
 
     setTimeout(() => {
       console.log(member.handle, 'Checking remote description')

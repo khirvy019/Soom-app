@@ -11,12 +11,11 @@
     </q-item>
     <q-item
       clickable
-      disable
       :to="{ name: 'webrtc2' }"
     >
       <q-item-section>
         <q-item-label>WebRTC2</q-item-label>
-        <q-item-label caption>Rewritten Implementation</q-item-label>
+        <q-item-label caption>Another version with different handshake protocol</q-item-label>
       </q-item-section>
     </q-item>
     <q-item
