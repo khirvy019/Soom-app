@@ -1,0 +1,30 @@
+{
+	"appId": "com.soom.app",
+	"appName": "Soom Meeting",
+	"bundledWebRuntime": false,
+	"npmClient": "npm",
+	"webDir": "www",
+	"plugins": {
+		"SplashScreen": {
+			"launchShowDuration": 0
+		},
+		"Keyboard": {
+			"resize": "body",
+			"style": "dark",
+			"resizeOnFullScreen": true
+		},
+		"PushNotifications": {
+			"presentationOptions": [
+				"badge",
+				"sound",
+				"alert"
+			]
+		}
+	},
+	"ios": {
+		"scheme": "Soom"
+	},
+	"server": {
+		"androidScheme": "https"
+	}
+}
