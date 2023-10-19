@@ -99,6 +99,7 @@ export default defineComponent({
     const mediaStream = ref([].map(() => new MediaStream())[0])
     async function initMediaStream() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+      closeMediaStream()
       mediaStream.value = stream
       window.ms = mediaStream.value
       return mediaStream.value
