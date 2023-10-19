@@ -7,6 +7,7 @@ const routes = [
       { path: '', name: 'home', component: () => import('src/pages/IndexPage.vue') },
       { path: 'webrtc1', name: 'webrtc1', component: () => import('src/pages/WebRTC1.vue') },
       { path: 'webrtc2', name: 'webrtc2', component: () => import('src/pages/WebRTC2.vue') },
+      { path: 'webrtc3', name: 'webrtc3', component: () => import('src/pages/WebRTC3.vue') },
       { path: 'local-stream-test', name: 'local-stream-test', component: () => import('src/pages/LocalStreamTest.vue') },
     ]
   },

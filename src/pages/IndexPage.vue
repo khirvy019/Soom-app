@@ -20,6 +20,15 @@
     </q-item>
     <q-item
       clickable
+      :to="{ name: 'webrtc3' }"
+    >
+      <q-item-section>
+        <q-item-label>WebRTC3</q-item-label>
+        <q-item-label caption>Manual handshake of Paytaca Implementation</q-item-label>
+      </q-item-section>
+    </q-item>
+    <q-item
+      clickable
       :to="{ name: 'local-stream-test' }"
     >
       <q-item-section>

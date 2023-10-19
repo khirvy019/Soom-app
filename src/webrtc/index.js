@@ -375,6 +375,16 @@ export class WebRtcCallManager {
     this.addPeerDisconnectionHandler(member);
     console.log(member.handle, 'Added ice connection state handler')
 
+    member.peer.addEventListener('connectionstatechange', evt => {
+      console.log(member.handle, 'connectionstatechange', member.state)
+    })
+    member.peer.addEventListener('icegatheringstatechange', () => {
+      console.log(member.handle, 'icegatheringstatechange', member.state)
+    })
+    member.peer.addEventListener('signalingstatechange', () => {
+      console.log(member.handle, 'signalingstatechange', member.state)
+    })
+
     member.peer.addEventListener('negotiationneeded', evt => {
       console.log(member.handle, 'Negotiation needed', evt)
       member.createOfferLocalDescription()
@@ -421,13 +431,13 @@ export class WebRtcCallManager {
       });
     }
 
-    setTimeout(() => {
-      console.log(member.handle, 'Checking remote description')
-      if (!member.peer.remoteDescription) {
-        console.log(member.handle, 'Removing member')
-        this.removeMember(member)
-      }
-    }, 10 * 1000)
+    // setTimeout(() => {
+    //   console.log(member.handle, 'Checking remote description')
+    //   if (!member.peer.remoteDescription) {
+    //     console.log(member.handle, 'Removing member')
+    //     this.removeMember(member)
+    //   }
+    // }, 10 * 1000)
 
     return member
   }
@@ -469,6 +479,16 @@ export class WebRtcCallManager {
     this.addPeerDisconnectionHandler(member);
     console.log(member.handle, 'Added ice connection state handler')
 
+    member.peer.addEventListener('connectionstatechange', evt => {
+      console.log(member.handle, 'connectionstatechange', member.state)
+    })
+    member.peer.addEventListener('icegatheringstatechange', () => {
+      console.log(member.handle, 'icegatheringstatechange', member.state)
+    })
+    member.peer.addEventListener('signalingstatechange', () => {
+      console.log(member.handle, 'signalingstatechange', member.state)
+    })
+
     member.peer.addEventListener('negotiationneeded', evt => {
       console.log(member.handle, 'Negotiation needed', evt)
       if (!member.peer.remoteDescription) return
@@ -500,13 +520,13 @@ export class WebRtcCallManager {
       })
     }
 
-    setTimeout(() => {
-      console.log(member.handle, 'Checking remote description')
-      if (!member.peer.remoteDescription) {
-        console.log(member.handle, 'Removing member')
-        this.removeMember(member)
-      }
-    }, 10 * 1000)
+    // setTimeout(() => {
+    //   console.log(member.handle, 'Checking remote description')
+    //   if (!member.peer.remoteDescription) {
+    //     console.log(member.handle, 'Removing member')
+    //     this.removeMember(member)
+    //   }
+    // }, 10 * 1000)
 
     return member
   }

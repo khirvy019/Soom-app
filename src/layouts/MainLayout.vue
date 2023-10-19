@@ -74,6 +74,12 @@ const linksList = [
     to: { name: 'webrtc2' },
   },
   {
+    title: 'Implementation #3',
+    caption: 'Manual handshake of Paytaca Implementation',
+    icon: 'filter_3',
+    to: { name: 'webrtc3' },
+  },
+  {
     title: 'Local Stream Test',
     caption: '',
     icon: 'stream',
