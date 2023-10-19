@@ -163,7 +163,7 @@ export default defineComponent({
     async function initManager() {
       manager.value?.cleanUp?.()
       if (manager.value) {
-        manager.value.callId = orderCallSession.value.id
+        manager.value.callId = callId.value
         return
       }
 
