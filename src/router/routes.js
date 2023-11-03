@@ -9,6 +9,7 @@ const routes = [
       { path: 'webrtc2', name: 'webrtc2', component: () => import('src/pages/WebRTC2.vue') },
       { path: 'webrtc3', name: 'webrtc3', component: () => import('src/pages/WebRTC3.vue') },
       { path: 'local-stream-test', name: 'local-stream-test', component: () => import('src/pages/LocalStreamTest.vue') },
+      { path: 'chat', name: 'chat', component: () => import('src/pages/ChatPage.vue') },
     ]
   },
 

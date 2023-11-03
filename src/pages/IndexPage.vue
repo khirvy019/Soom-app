@@ -36,6 +36,15 @@
         <q-item-label caption>Test media stream</q-item-label>
       </q-item-section>
     </q-item>
+    <q-item
+      clickable
+      :to="{ name: 'chat' }"
+    >
+      <q-item-section>
+        <q-item-label>Chat</q-item-label>
+        <q-item-label caption>Chat page sandbox</q-item-label>
+      </q-item-section>
+    </q-item>
   </q-page>
 </template>
 <script>
