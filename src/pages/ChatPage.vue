@@ -36,6 +36,67 @@
     <q-card class="q-mb-md">
       <q-card-section>
         <div class="row">
+          <div class="text-h6">Image</div>
+          <q-space/>
+        </div>
+        <q-file
+          dense outlined
+          label="Image"
+          v-model="image.file"
+        >
+          <template v-slot:before>
+            <img
+              v-if="imageFileUrl"
+              :src="imageFileUrl"
+              class="rounded-borders"
+              style="width:100%;height:3rem;"
+            />
+          </template>
+          <template v-slot:append>
+            <q-btn
+              flat
+              no-caps label="Encrypt"
+              padding="xs"
+              @click="() => encryptImage()"
+            />
+          </template>
+        </q-file>
+        <div v-if="image.encrypted">
+          <div class="row items-center">
+            <div class="text-subtitle1">Encrypted:</div>
+            <q-space/>
+            <q-btn flat no-caps label="Decrypt" @click="() => decryptImage()"/>
+          </div>
+          <div class="row items-start no-wrap">
+            <img
+              v-if="encryptedImageUrl"
+              :src="encryptedImageUrl"
+              class="rounded-borders"
+              style="width:100%;height:3rem;"
+              @load="onEncryptedImageLoad"
+            />
+            <div>
+              {{ image.encrypted }}
+            </div>
+          </div>
+        </div>
+
+        <div v-if="image?.decrypted">
+          <div class="text-subtitle1">Decrypted:</div>
+          <div>{{ image?.decrypted }}</div>
+          <img
+            v-if="decryptedImageUrl"
+            :src="decryptedImageUrl"
+            class="rounded-borders"
+            style="max-width:100%;height:3rem;"
+            @load="onEncryptedImageLoad"
+          />
+        </div>
+      </q-card-section>
+    </q-card>
+    <q-card class="q-mb-md">
+      <q-card-section>
+        <div class="row">
           <div class="text-h6">Message</div>
           <q-space/>
         </div>
@@ -84,7 +145,7 @@ import crypto from 'crypto'
 import * as secp from '@noble/secp256k1';
 import * as chatUtils from 'src/utils/chat'
 import { useQuasar } from 'quasar';
-import { defineComponent, onMounted, ref } from 'vue'
+import { defineComponent, onMounted, ref, watch } from 'vue'
 
 const otherPrivs = [
   '7356d55b1bef54c5ba4674edc220f5141441b5424f7b68fb503b603813404784',
@@ -138,6 +199,50 @@ export default defineComponent({
         return pubHex
       })
     })
+
+    const image = ref({
+      file: null,
+      encrypted: [].map(() => new File())[0],
+      decrypted: [].map(() => new File())[0],
+    })
+    const imageFileUrl = ref('')
+    watch(() => image.value?.file, (newVal, oldVal) => {
+      if (newVal) imageFileUrl.value = URL.createObjectURL(newVal)
+      else imageFileUrl.value = ''
+      if (oldVal) URL.revokeObjectURL(oldVal)
+    })
+
+    const encryptedImageUrl = ref('')
+    watch(() => image.value?.encrypted, (newVal, oldVal) => {
+      if (newVal) encryptedImageUrl.value = URL.createObjectURL(newVal)
+      else encryptedImageUrl.value = ''
+      if (oldVal) URL.revokeObjectURL(oldVal)
+    })
+
+    const decryptedImageUrl = ref('')
+    watch(() => image.value?.decrypted, (newVal, oldVal) => {
+      if (newVal) decryptedImageUrl.value = URL.createObjectURL(newVal)
+      else decryptedImageUrl.value = ''
+      if (oldVal) URL.revokeObjectURL(oldVal)
+    })
+    async function encryptImage() {
+      const encryptResp = await chatUtils.encryptImage({
+        file: image.value.file,
+        privkey: kp.value.priv,
+        pubkeys: otherPks.value,
+      })
+      image.value.encrypted = await chatUtils.compressEncryptedImage(encryptResp)
+      console.log('image.value.encrypted', image.value.encrypted)
+    }
+    function onEncryptedImageLoad(...args) {
+      console.log('onEncryptedImageLoad', ...args)
+    }
+
+    async function decryptImage() {
+      const decompressed = await chatUtils.decompressEncryptedImage(image.value.encrypted)
+      const opts = { ...decompressed, privkey: kp.value.priv }
+      image.value.decrypted = await chatUtils.decryptImage(opts)
+    }
 
     const message = ref({
       data: 'Test message',
@@ -196,6 +301,14 @@ export default defineComponent({
       generateKey,
 
       otherPks,
+
+      image,
+      imageFileUrl,
+      encryptedImageUrl,
+      decryptedImageUrl,
+      encryptImage,
+      onEncryptedImageLoad,
+      decryptImage,
 
       message,
       encryptMessage,
